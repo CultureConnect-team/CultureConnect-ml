@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rekomendasi Tempat Wisata</title>
+</head>
+<body>
+    <h1>Masukkan Preferensi Kamu</h1>
+    <form method="POST">
+        <label>Kategori (pisahkan dengan koma):</label><br>
+        <input type="text" name="kategori"><br><br>
+        <label>Deskripsi preferensi:</label><br>
+        <input type="text" name="deskripsi"><br><br>
+        <label>Minimal Rating:</label><br>
+        <input type="number" name="rating" step="0.1"><br><br>
+        <button type="submit">Cari Rekomendasi</button>
+    </form>
+
+    {% if rekomendasi %}
+        <h2>Hasil Rekomendasi:</h2>
+        <ul>
+        {% for r in rekomendasi %}
+            <li><strong>{{ r.name }}</strong> ({{ r.category }}) - {{ r.location }}<br>
+            Rating: {{ r.rating }} | Similarity: {{ r.similarity }}<br>
+            {{ r.description }}<br><br></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

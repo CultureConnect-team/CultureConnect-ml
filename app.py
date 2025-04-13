@@ -1,15 +1,12 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, jsonify
 from joblib import load
 import pandas as pd
 import numpy as np
 
 app = Flask(__name__)
 
-# Load model & preprocessor
 preprocessor = load("preprocessor.joblib")
 model = load("CBF_model.joblib")
-
-# Load data asli (buat nampilin hasil)
 df_full = pd.read_json("dataset_updated.json")
 
 def rekomendasi_tempat(preferensi_kategori_list, deskripsi_user="", rating_user=4.5, top_k=10):
@@ -38,16 +35,14 @@ def rekomendasi_tempat(preferensi_kategori_list, deskripsi_user="", rating_user=
         })
     return rekomendasi
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    rekomendasi = []
-    if request.method == "POST":
-        kategori_input = request.form["kategori"]
-        kategori_list = [k.strip() for k in kategori_input.split(",")]
-        deskripsi = request.form["deskripsi"]
-        rating = float(request.form["rating"])
-        rekomendasi = rekomendasi_tempat(kategori_list, deskripsi, rating)
-    return render_template("index.html", rekomendasi=rekomendasi)
+@app.route("/api/rekomendasi", methods=["POST"])
+def api_rekomendasi():
+    data = request.get_json()
+    kategori = data.get("kategori", [])
+    deskripsi = data.get("deskripsi", "")
+    rating = data.get("rating", 4.5)
+    hasil = rekomendasi_tempat(kategori, deskripsi, rating)
+    return jsonify(hasil)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
