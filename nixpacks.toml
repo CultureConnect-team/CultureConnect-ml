@@ -4,4 +4,4 @@ providers = ["...", "python"]
 cmd = "python3 app.py"
 
 [variables]
-NIXPACKS_PYTHON_VERSION=3.12
+NIXPACKS_PYTHON_VERSION="3.12"
