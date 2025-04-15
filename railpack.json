@@ -1,17 +1,7 @@
 {
     "$schema": "https://schema.railpack.com",
-    "steps": {
-        "install": {
-            "commands": ["pip install -r requirements.txt"]
-        }
-    },
+    "steps": {},
     "deploy": {
-        "inputs": [
-            {
-                "include": ["."],
-                "step": "install"
-            }
-        ],
         "startCommand": "python app.py"
     },
     "provider": "python",
