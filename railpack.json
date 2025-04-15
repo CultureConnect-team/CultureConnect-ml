@@ -6,6 +6,6 @@
     },
     "provider": "python",
     "packages": {
-        "python": "3.13"
+        "python": "3.12"
     }
   }
