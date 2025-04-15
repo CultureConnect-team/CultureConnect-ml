@@ -4,10 +4,8 @@ import pandas as pd
 import numpy as np
 import traceback
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Load models and data
 try:
     preprocessor = load("preprocessor.joblib")
     model = load("CBF_model.joblib")
@@ -19,10 +17,10 @@ except Exception as e:
     valid_categories = []
 
 def get_recommendations(category_list, user_description="", user_rating=4.5, top_k=100):
-    """
-    Generate recommendations based on user preferences
-    """
-    # Filter valid categories
+
+    if len(category_list) < 3:
+        raise ValueError("Minimal 3 kategori harus dipilih.")
+
     category_list = [cat for cat in category_list if cat in valid_categories]
     if not category_list:
         return []
@@ -44,15 +42,14 @@ def get_recommendations(category_list, user_description="", user_rating=4.5, top
     if not vectors:
         return []
 
-    # Calculate average vector and get nearest neighbors
     avg_vector = np.mean(vectors, axis=0)
     distances, indices = model.kneighbors(avg_vector, n_neighbors=top_k)
     
-    # Prepare recommendations
     recommendations = []
     for idx, dist in zip(indices[0], distances[0]):
         row = df_full.iloc[idx]
         recommendations.append({
+            "id": row["id"],
             "name": row["name"],
             "category": row["category"],
             "location": row["location"],
@@ -66,15 +63,12 @@ def get_recommendations(category_list, user_description="", user_rating=4.5, top
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    """Main page with recommendation form"""
-    # Initialize default form data
     form_data = {
         "kategori": "",
         "deskripsi": "",
         "rating": "4.5"
     }
     
-    # Prepare template context
     context = {
         "input_data": form_data,
         "valid_categories": valid_categories,
