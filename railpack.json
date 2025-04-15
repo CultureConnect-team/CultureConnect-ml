@@ -7,7 +7,6 @@
     },
     "deploy": {
         "inputs": [
-            "...",
             {
                 "include": ["."],
                 "step": "install"
