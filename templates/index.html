@@ -1,29 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekomendasi Tempat Wisata</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-container {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fdecea;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c;
+        }
+        .recommendation {
+            margin-top: 20px;
+        }
+        .place-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        .place-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .place-meta {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .place-description {
+            margin-top: 10px;
+        }
+        .category-hint {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .form-container {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Masukkan Preferensi Kamu</h1>
-    <form method="POST">
-        <label>Kategori (pisahkan dengan koma):</label><br>
-        <input type="text" name="kategori"><br><br>
-        <label>Deskripsi preferensi:</label><br>
-        <input type="text" name="deskripsi"><br><br>
-        <label>Minimal Rating:</label><br>
-        <input type="number" name="rating" step="0.1"><br><br>
-        <button type="submit">Cari Rekomendasi</button>
-    </form>
+    <h1>Sistem Rekomendasi Tempat Wisata</h1>
+    
+    <div class="form-container">
+        <form method="POST">
+            <label for="kategori">Kategori (pisahkan dengan koma):</label>
+            <input type="text" id="kategori" name="kategori" value="{{ input_data.kategori }}" required>
+            <div class="category-hint">
+                Contoh: {{ valid_categories[:3]|join(', ') }}, dll.
+            </div>
+            
+            <label for="deskripsi">Deskripsi preferensi (opsional):</label>
+            <input type="text" id="deskripsi" name="deskripsi" value="{{ input_data.deskripsi }}">
+            
+            <label for="rating">Minimal Rating (0-5):</label>
+            <input type="number" id="rating" name="rating" min="0" max="5" step="0.1" 
+                   value="{{ input_data.rating }}" required>
+            
+            <button type="submit">Cari Rekomendasi</button>
+        </form>
+    </div>
+
+    {% if error %}
+        <div class="error">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
 
     {% if rekomendasi %}
-        <h2>Hasil Rekomendasi:</h2>
-        <ul>
-        {% for r in rekomendasi %}
-            <li><strong>{{ r.name }}</strong> ({{ r.category }}) - {{ r.location }}<br>
-            Rating: {{ r.rating }} | Similarity: {{ r.similarity }}<br>
-            {{ r.description }}<br><br></li>
-        {% endfor %}
-        </ul>
+        <div class="recommendation">
+            <h2>Hasil Rekomendasi ({{ rekomendasi|length }}):</h2>
+            
+            {% for r in rekomendasi %}
+                <div class="place-card">
+                    <div class="place-name">{{ r.name }}</div>
+                    <div class="place-meta">
+                        <strong>Kategori:</strong> {{ r.category }} | 
+                        <strong>Lokasi:</strong> {{ r.location }} | 
+                        <strong>Rating:</strong> {{ r.rating }} | 
+                        <strong>Kecocokan:</strong> {{ (r.similarity * 100)|round(1) }}%
+                    </div>
+                    <div class="place-description">
+                        {{ r.description }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% elif request.method == 'POST' and not error %}
+        <div class="error">
+            Tidak ditemukan rekomendasi untuk kriteria yang diminta. Coba dengan kategori yang berbeda.
+        </div>
     {% endif %}
 </body>
 </html>
