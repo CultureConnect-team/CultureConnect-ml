@@ -1,0 +1,11 @@
+{
+    "$schema": "https://schema.railpack.com",
+    "steps": {},
+    "deploy": {
+        "startCommand": "python app.py"
+    },
+    "provider": "python",
+    "packages": {
+        "python": "3.12"
+    }
+  }
