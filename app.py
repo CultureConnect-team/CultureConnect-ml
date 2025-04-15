@@ -18,7 +18,7 @@ except Exception as e:
     traceback.print_exc()
     valid_categories = []
 
-def get_recommendations(category_list, user_description="", user_rating=4.5, top_k=10):
+def get_recommendations(category_list, user_description="", user_rating=4.5, top_k=100):
     """
     Generate recommendations based on user preferences
     """
