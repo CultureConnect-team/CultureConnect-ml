@@ -2,3 +2,6 @@ providers = ["...", "python"]
 
 [start]
 cmd = "python3 app.py"
+
+[variables]
+NIXPACKS_PYTHON_VERSION=3.12
