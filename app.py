@@ -49,15 +49,16 @@ def get_recommendations(category_list, user_description="", user_rating=4.5, top
     for idx, dist in zip(indices[0], distances[0]):
         row = df_full.iloc[idx]
         recommendations.append({
-            "id": row["id"],
-            "name": row["name"],
-            "category": row["category"],
-            "location": row["location"],
-            "rating": row["rating"],
-            "description": row["description"],
-            "image": row["image"],
-            "similarity": round(1 - dist, 4)
+            "id": int(row["id"]),
+            "name": str(row["name"]),
+            "category": str(row["category"]),
+            "location": str(row["location"]),
+            "rating": float(row["rating"]),
+            "description": str(row["description"]),
+            "image": str(row["image"]),
+            "similarity": round(1 - float(dist), 4)
         })
+
     
     return recommendations
 
@@ -125,7 +126,9 @@ def api_recommendations():
             categories = [k.strip() for k in categories.split(",") if k.strip()]
             
         description = data.get("deskripsi", "")
+        
         rating = float(data.get("rating", 4.5))
+
         
         # Get recommendations
         results = get_recommendations(categories, description, rating)
